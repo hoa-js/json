@@ -1,4 +1,4 @@
-import type { HoaContext } from 'hoa'
+import type { HoaContext, HoaMiddleware } from 'hoa'
 
 export interface JSONOptions {
   status?: ((ctx: HoaContext, error?: Error) => number | Promise<number>) | number
@@ -6,8 +6,6 @@ export interface JSONOptions {
   fail?: Record<string, ((ctx: HoaContext, error: Error) => any | Promise<any>) | any>
 }
 
-export type JSONMiddleware = (ctx: HoaContext, next: () => Promise<void>) => Promise<void>
-
-export function json(options?: JSONOptions): JSONMiddleware
+export function json(options?: JSONOptions): HoaMiddleware
 
 export default json
