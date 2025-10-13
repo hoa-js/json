@@ -13,7 +13,7 @@
  *   Keys and resolvers used to compose the success JSON body; values may be literals or async functions.
  * @param {Record<string, (((ctx: import('hoa').HoaContext, error: Error) => any | Promise<any>) | any)>} [options.fail]
  *   Keys and resolvers used to compose the error JSON body; values may be literals or async functions.
- * @returns {(ctx: import('hoa').HoaContext, next: () => Promise<void>) => Promise<void>} Hoa middleware function.
+ * @returns {HoaMiddleware} Hoa middleware function.
  */
 export function json (options = {}) {
   const statusSchema = options.status ?? ((ctx, e) => {
@@ -45,9 +45,34 @@ export function json (options = {}) {
   return async function hoaJson (ctx, next) {
     try {
       await next()
-    } catch (err) {
-      const body = {}
 
+      if (ctx._raw) {
+        return
+      }
+
+      const method = ctx.req.method.toLowerCase()
+      if (method === 'head' || method === 'options') return
+
+      const body = {}
+      for (const key in successSchema) {
+        const fn = successSchema[key]
+        body[key] = typeof fn === 'function' ? await fn(ctx) : fn
+      }
+
+      const status = typeof statusSchema === 'function'
+        ? await statusSchema(ctx)
+        : statusSchema
+
+      ctx.res.status = status
+      ctx.res.body = body
+    } catch (err) {
+      if (ctx._raw) {
+        throw err
+      }
+
+      ctx.app.onerror(err, ctx)
+
+      const body = {}
       for (const key in failSchema) {
         const fn = failSchema[key]
         body[key] = typeof fn === 'function' ? await fn(ctx, err) : fn
@@ -67,24 +92,7 @@ export function json (options = {}) {
 
       ctx.res.status = status
       ctx.res.body = body
-      return
     }
-
-    const method = ctx.req.method.toLowerCase()
-    if (method === 'head' || method === 'options') return
-
-    const body = {}
-    for (const key in successSchema) {
-      const fn = successSchema[key]
-      body[key] = typeof fn === 'function' ? await fn(ctx) : fn
-    }
-
-    const status = typeof statusSchema === 'function'
-      ? await statusSchema(ctx)
-      : statusSchema
-
-    ctx.res.status = status
-    ctx.res.body = body
   }
 }
 

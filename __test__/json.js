@@ -278,4 +278,36 @@ describe('JSON response formatting middleware for Hoa.', () => {
       message: null
     })
   })
+
+  it('ctx._raw success skips formatting', async () => {
+    const app = new Hoa()
+    app.use(json())
+    app.use(async (ctx) => {
+      if (ctx.req.pathname === '/raw') {
+        ctx._raw = true
+        ctx.res.status = 200
+        ctx.res.body = { ok: true }
+      }
+    })
+
+    const res = await app.fetch(new Request('http://localhost/raw'))
+    expect(res.status).toBe(200)
+    expect(await res.json()).toEqual({ ok: true })
+  })
+
+  it('ctx._raw error rethrows, default error handler responds as text', async () => {
+    const app = new Hoa()
+    app.use(json())
+    app.use(async (ctx) => {
+      if (ctx.req.pathname === '/raw-error') {
+        ctx._raw = true
+        ctx.throw(418, { message: "I'm a teapot", headers: { 'x-error-id': 'raw123' } })
+      }
+    })
+
+    const res = await app.fetch(new Request('http://localhost/raw-error'))
+    expect(res.status).toBe(418)
+    expect(res.headers.get('x-error-id')).toBe('raw123')
+    expect(await res.text()).toBe("I'm a teapot")
+  })
 })
