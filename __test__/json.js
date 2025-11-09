@@ -1,4 +1,4 @@
-import { Hoa } from 'hoa'
+import { Hoa, statusTextMapping } from 'hoa'
 
 import { json } from '../src/json.js'
 
@@ -79,7 +79,7 @@ describe('JSON response formatting middleware for Hoa.', () => {
     expect(errorRes.status).toBe(500)
     expect(await errorRes.json()).toEqual({
       code: 500,
-      message: 'error!!!'
+      message: statusTextMapping[500]
     })
 
     const throwRes = await app.fetch(new Request('http://localhost/throw'))
@@ -119,7 +119,7 @@ describe('JSON response formatting middleware for Hoa.', () => {
     expect(errorRes.status).toBe(200)
     expect(await errorRes.json()).toEqual({
       code: 500,
-      message: 'error!!!'
+      message: statusTextMapping[500]
     })
 
     const throwRes2 = await app.fetch(new Request('http://localhost/throw'))
@@ -275,7 +275,7 @@ describe('JSON response formatting middleware for Hoa.', () => {
     expect(res.status).toBe(503)
     expect(await res.json()).toEqual({
       code: 503,
-      message: null
+      message: statusTextMapping[503]
     })
   })
 

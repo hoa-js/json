@@ -1,3 +1,5 @@
+import { statusTextMapping } from 'hoa'
+
 /**
  * JSON response formatting middleware for Hoa.
  *
@@ -39,7 +41,7 @@ export function json (options = {}) {
    */
   const failSchema = options.fail ?? {
     code: (ctx, e) => e.status || e.statusCode || 500,
-    message: (ctx, e) => e.message || null
+    message: (ctx, e) => e.expose ? e.message : statusTextMapping[e.status || e.statusCode || 500]
   }
 
   return async function hoaJson (ctx, next) {
