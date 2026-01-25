@@ -31,7 +31,7 @@ export function json (options = {}) {
    */
   const successSchema = options.success ?? {
     code: (ctx) => ctx.res.status,
-    data: (ctx) => ctx.res.body || null
+    data: (ctx) => ctx.res.body ?? null
   }
 
   /**

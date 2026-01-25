@@ -159,3 +159,4 @@ settings.local.json
 
 # jest
 .jest-*
+example.js
