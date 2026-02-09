@@ -1,17 +1,17 @@
 {
   "name": "@hoajs/json",
-  "version": "0.2.2",
+  "version": "0.2.3",
   "description": "JSON response formatting middleware for Hoa.",
-  "main": "./dist/cjs/json.js",
+  "main": "./dist/cjs/json.cjs",
   "type": "module",
-  "module": "./dist/esm/json.js",
+  "module": "./dist/esm/json.mjs",
   "types": "./types/index.d.ts",
   "exports": {
     ".": {
       "types": "./types/index.d.ts",
-      "import": "./dist/esm/json.js",
-      "require": "./dist/cjs/json.js",
-      "default": "./dist/esm/json.js"
+      "import": "./dist/esm/json.mjs",
+      "require": "./dist/cjs/json.cjs",
+      "default": "./dist/esm/json.mjs"
     }
   },
   "files": [
@@ -21,7 +21,7 @@
   ],
   "scripts": {
     "lint": "eslint .",
-    "build": "tsup",
+    "build": "tsdown",
     "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js",
     "prepublishOnly": "npm run lint && npm run test && npm run build",
     "prepare": "husky"
@@ -40,15 +40,15 @@
     "json"
   ],
   "devDependencies": {
-    "@commitlint/cli": "20.1.0",
-    "@commitlint/config-conventional": "20.0.0",
-    "eslint": "9.39.1",
-    "globals": "16.5.0",
+    "@commitlint/cli": "20.4.1",
+    "@commitlint/config-conventional": "20.4.1",
+    "eslint": "9.39.2",
+    "globals": "17.3.0",
     "hoa": "*",
     "husky": "9.1.7",
     "jest": "30.2.0",
     "neostandard": "0.12.2",
-    "tsup": "8.5.0"
+    "tsdown": "^0.20.3"
   },
   "peerDependencies": {
     "hoa": "*"

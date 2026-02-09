@@ -1,3 +1,8 @@
+## v0.2.3 / 2026-02-09
+
+- feat: use tsdown instead of tsup
+- fix: update devDependencies
+
 ## v0.2.2 / 2026-01-25
 
 - fix: successSchema
