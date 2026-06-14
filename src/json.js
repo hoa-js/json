@@ -9,6 +9,8 @@ import { statusTextMapping } from 'hoa'
  * - For HEAD and OPTIONS requests, the middleware skips building a body.
  *
  * @param {Object} [options]
+ * @param {boolean} [options.expose=false]
+ *   When true, exposes the error message globally; overridden per-error by `error.expose`.
  * @param {(import('hoa').HoaContext, Error=) => (number|Promise<number>) | number} [options.status]
  *   Status schema or fixed status code; if a function, it's called as (ctx, error?) and may return a number or a Promise<number>.
  * @param {Record<string, (((ctx: import('hoa').HoaContext) => any | Promise<any>) | any)>} [options.success]
@@ -41,7 +43,7 @@ export function json (options = {}) {
    */
   const failSchema = options.fail ?? {
     code: (ctx, e) => e.status || e.statusCode || 500,
-    message: (ctx, e) => e.expose ? e.message : statusTextMapping[e.status || e.statusCode || 500]
+    message: (ctx, e) => (e.expose ?? options.expose) ? e.message : statusTextMapping[e.status || e.statusCode || 500]
   }
 
   return async function hoaJson (ctx, next) {

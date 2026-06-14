@@ -279,6 +279,43 @@ describe('JSON response formatting middleware for Hoa.', () => {
     })
   })
 
+  it('options.expose -> true (exposes all error messages globally)', async () => {
+    const app = new Hoa()
+    app.use(json({ expose: true }))
+    app.use(async (ctx) => {
+      if (ctx.req.pathname === '/error') {
+        throw new Error('plain error message')
+      }
+    })
+
+    const res = await app.fetch(new Request('http://localhost/error'))
+    expect(res.status).toBe(500)
+    expect(await res.json()).toEqual({
+      code: 500,
+      message: 'plain error message'
+    })
+  })
+
+  it('options.expose -> true, e.expose = false overrides per-error', async () => {
+    const app = new Hoa()
+    app.use(json({ expose: true }))
+    app.use(async (ctx) => {
+      if (ctx.req.pathname === '/error') {
+        const err = new Error('secret message')
+        err.status = 403
+        err.expose = false
+        throw err
+      }
+    })
+
+    const res = await app.fetch(new Request('http://localhost/error'))
+    expect(res.status).toBe(403)
+    expect(await res.json()).toEqual({
+      code: 403,
+      message: statusTextMapping[403]
+    })
+  })
+
   it('ctx._raw success skips formatting', async () => {
     const app = new Hoa()
     app.use(json())

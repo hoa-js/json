@@ -1,3 +1,7 @@
+## v0.2.4 / 2026-06-14
+
+- feat: add `options.expose` to globally expose error messages
+
 ## v0.2.3 / 2026-02-09
 
 - feat: use tsdown instead of tsup
